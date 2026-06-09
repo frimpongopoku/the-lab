@@ -1,632 +1,695 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mr Frimpong's Lab — Things I've Built</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0e0e0e;
-    --bg2: #161616;
-    --bg3: #1e1e1e;
-    --border: rgba(255,255,255,0.07);
-    --border-hover: rgba(255,255,255,0.15);
-    --text: #f0ede8;
-    --text-muted: #888;
-    --text-subtle: #555;
-    --accent: #fb923c;
-    --accent-dim: rgba(251, 146, 60, 0.12);
-    --accent-text: #7a3a00;
-    --card-bg: #141414;
-    --tag-bg: rgba(255,255,255,0.05);
-    --tag-text: #999;
-    --serif: 'Instrument Serif', Georgia, serif;
-    --sans: 'DM Sans', system-ui, sans-serif;
-    --mono: 'DM Mono', monospace;
-  }
-
-  [data-theme="light"] {
-    --bg: #f8f7f3;
-    --bg2: #f0ede6;
-    --bg3: #e8e4db;
-    --border: rgba(0,0,0,0.08);
-    --border-hover: rgba(0,0,0,0.18);
-    --text: #1a1a1a;
-    --text-muted: #666;
-    --text-subtle: #aaa;
-    --accent: #c2520a;
-    --accent-dim: rgba(194, 82, 10, 0.08);
-    --accent-text: #c2520a;
-    --card-bg: #ffffff;
-    --tag-bg: rgba(0,0,0,0.04);
-    --tag-text: #777;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: var(--sans);
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    transition: background 0.3s, color 0.3s;
-  }
-
-  /* ── NAV ── */
-  nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    padding: 0 2rem;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--bg);
-    border-bottom: 1px solid var(--border);
-    backdrop-filter: blur(12px);
-  }
-
-  .nav-brand {
-    font-family: var(--serif);
-    font-size: 1.15rem;
-    color: var(--text);
-    text-decoration: none;
-    letter-spacing: -0.01em;
-  }
-
-  .nav-brand span {
-    color: var(--accent);
-  }
-
-  .nav-right {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-  }
-
-  .theme-toggle {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    cursor: pointer;
-    border-radius: 20px;
-    padding: 5px 12px;
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.05em;
-    transition: border-color 0.2s, color 0.2s;
-  }
-  .theme-toggle:hover { border-color: var(--border-hover); color: var(--text); }
-
-  .build-count {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text-subtle);
-  }
-
-  /* ── HERO ── */
-  .hero {
-    padding: 6rem 2rem 4rem;
-    max-width: 860px;
-    margin: 0 auto;
-  }
-
-  .hero-eyebrow {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--accent);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 1.25rem;
-  }
-
-  .hero h1 {
-    font-family: var(--serif);
-    font-size: clamp(2.4rem, 6vw, 4.2rem);
-    font-weight: 400;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    color: var(--text);
-    margin-bottom: 1.5rem;
-  }
-
-  .hero h1 em {
-    font-style: italic;
-    color: var(--text-muted);
-  }
-
-  .hero-sub {
-    font-size: 1rem;
-    color: var(--text-muted);
-    line-height: 1.7;
-    max-width: 480px;
-  }
-
-  /* ── FILTER BAR ── */
-  .filter-bar {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 2rem 2.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-
-  .filter-btn {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    cursor: pointer;
-    border-radius: 20px;
-    padding: 5px 14px;
-    font-family: var(--sans);
-    font-size: 13px;
-    transition: all 0.15s;
-  }
-  .filter-btn:hover { border-color: var(--border-hover); color: var(--text); }
-  .filter-btn.active {
-    background: var(--accent-dim);
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  /* ── GRID ── */
-  .grid-wrap {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 2rem 6rem;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5px;
-  }
-
-  /* ── CARD ── */
-  .card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 0;
-    overflow: hidden;
-    cursor: pointer;
-    text-decoration: none;
-    color: inherit;
-    display: flex;
-    flex-direction: column;
-    transition: border-color 0.2s, transform 0.2s;
-    position: relative;
-  }
-
-  .card:first-child { border-radius: 12px 0 0 0; }
-  .card:nth-child(3) { border-radius: 0 12px 0 0; }
-
-  .grid:has(.card:nth-child(4)) .card:nth-last-child(1) { border-radius: 0 0 12px 12px; }
-
-  .card:hover {
-    border-color: var(--border-hover);
-    z-index: 1;
-    transform: translateY(-2px);
-  }
-
-  .card-img {
-    width: 100%;
-    aspect-ratio: 16/9;
-    object-fit: cover;
-    display: block;
-    background: var(--bg3);
-    filter: grayscale(20%);
-    transition: filter 0.3s;
-  }
-
-  .card:hover .card-img { filter: grayscale(0%); }
-
-  .card-img-placeholder {
-    width: 100%;
-    aspect-ratio: 16/9;
-    background: var(--bg3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--serif);
-    font-size: 2rem;
-    color: var(--text-subtle);
-    font-style: italic;
-  }
-
-  .card-body {
-    padding: 1.25rem 1.5rem 1.5rem;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .card-tags {
-    display: flex;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-    margin-bottom: 0.75rem;
-  }
-
-  .card-tag {
-    font-family: var(--mono);
-    font-size: 10px;
-    padding: 3px 8px;
-    border-radius: 4px;
-    background: var(--tag-bg);
-    color: var(--tag-text);
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-
-  .card-title {
-    font-family: var(--serif);
-    font-size: 1.2rem;
-    font-weight: 400;
-    line-height: 1.3;
-    color: var(--text);
-    margin-bottom: 0.5rem;
-    letter-spacing: -0.01em;
-  }
-
-  .card-excerpt {
-    font-size: 13.5px;
-    color: var(--text-muted);
-    line-height: 1.65;
-    flex: 1;
-  }
-
-  .card-footer {
-    padding: 0.75rem 1.5rem 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-top: 1px solid var(--border);
-  }
-
-  .card-date {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text-subtle);
-  }
-
-  .card-arrow {
-    font-size: 16px;
-    color: var(--text-subtle);
-    transition: transform 0.2s, color 0.2s;
-  }
-
-  .card:hover .card-arrow { transform: translate(3px, -3px); color: var(--accent); }
-
-  /* ── STATUS BADGE ── */
-  .status {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 20px;
-    backdrop-filter: blur(6px);
-  }
-  .status-live { background: rgba(251,146,60,0.15); color: #fb923c; border: 1px solid rgba(251,146,60,0.3); }
-  .status-wip  { background: rgba(255,180,50,0.15);  color: #f5a623; border: 1px solid rgba(255,180,50,0.25); }
-  .status-archived { background: rgba(150,150,150,0.1); color: #888; border: 1px solid rgba(150,150,150,0.2); }
-  [data-theme="light"] .status-live { background: rgba(194,82,10,0.08); color: #c2520a; border-color: rgba(194,82,10,0.2); }
-
-  /* ── EMPTY STATE ── */
-  .empty {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 5rem 2rem;
-    color: var(--text-subtle);
-    font-size: 14px;
-  }
-
-  /* ── FOOTER ── */
-  footer {
-    text-align: center;
-    padding: 2rem;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text-subtle);
-    border-top: 1px solid var(--border);
-  }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 640px) {
-    nav { padding: 0 1.25rem; }
-    .hero { padding: 3.5rem 1.25rem 3rem; }
-    .filter-bar, .grid-wrap { padding-left: 1.25rem; padding-right: 1.25rem; }
-    .grid { grid-template-columns: 1fr; gap: 1rem; border-radius: 0; }
-    .card { border-radius: 10px !important; }
-    .card:hover { transform: none; }
-  }
-
-  @media (max-width: 900px) and (min-width: 641px) {
-    .grid { grid-template-columns: repeat(2, 1fr); }
-  }
-
-  /* ── SEARCH ── */
-  .search-wrap {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 2rem 1.5rem;
-  }
-  .search-container { position: relative; }
-  .search-input {
-    width: 100%;
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 16px 10px 40px;
-    font-family: var(--sans);
-    font-size: 14px;
-    color: var(--text);
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .search-input::placeholder { color: var(--text-subtle); }
-  .search-input:focus { border-color: var(--accent); }
-  .search-icon {
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-subtle);
-    font-size: 14px;
-    pointer-events: none;
-  }
-  @media (max-width: 640px) {
-    .search-wrap { padding-left: 1.25rem; padding-right: 1.25rem; }
-  }
-
-  /* ── HIDDEN ── */
-  .card[data-hidden="true"] { display: none; }
-</style>
-</head>
-<body>
-
-<nav>
-  <a class="nav-brand" href="#">the <span>lab</span></a>
-  <div class="nav-right">
-    <span class="build-count" id="count-display"></span>
-    <button class="theme-toggle" id="theme-btn">light</button>
-  </div>
-</nav>
-
-<section class="hero">
-  <p class="hero-eyebrow">Work in progress — always</p>
-  <h1>Things I've<br><em>shipped, built &amp; deployed</em></h1>
-  <p class="hero-sub">A running log of tools, experiments, and ideas I've turned into real things.</p>
-</section>
-
-<div class="search-wrap">
-  <div class="search-container">
-    <span class="search-icon">&#9906;</span>
-    <input class="search-input" id="search-input" type="search" placeholder="Search by name, tag, or description…" autocomplete="off">
-  </div>
-</div>
-
-<div class="filter-bar" id="filter-bar">
-  <button class="filter-btn active" data-tag="all">All</button>
-</div>
-
-<div class="grid-wrap">
-  <div class="grid" id="grid"></div>
-</div>
-
-<footer>
-  built by me · updated manually · no trackers
-</footer>
-
-<script>
-/* ═══════════════════════════════════════════════════
-   ✏️  YOUR PROJECTS LIST — edit this to add more
-   ═══════════════════════════════════════════════════
-
-   Fields:
-   - name:    short handle, used for filtering & linking
-   - title:   display title on the card
-   - excerpt: one or two sentence description
-   - url:     where it lives
-   - image:   path or URL to a screenshot (optional — leave "" for placeholder)
-   - tags:    array of strings for filtering
-   - date:    when you shipped it
-   - status:  "live" | "wip" | "archived"
-*/
-
-const projects = [
-  {
-    name: "color-tool",
-    title: "Color Contrast Checker",
-    excerpt: "Paste two hex codes, get an instant WCAG accessibility rating. Built in an afternoon to stop tabbing between browser tools.",
-    url: "https://example.com/color-tool",
-    image: "",
-    tags: ["tool", "design"],
-    date: "Jun 2025",
-    status: "live"
-  },
-  {
-    name: "daily-standup",
-    title: "Daily Standup Generator",
-    excerpt: "Pulls open GitHub issues and drafts a standup summary. Saves five minutes every morning — which adds up.",
-    url: "https://example.com/standup",
-    image: "",
-    tags: ["productivity", "ai"],
-    date: "Apr 2025",
-    status: "live"
-  },
-  {
-    name: "budget-split",
-    title: "Trip Budget Splitter",
-    excerpt: "Add people, add expenses. It handles who owes what. No account, no ads, no nonsense.",
-    url: "https://example.com/split",
-    image: "",
-    tags: ["tool", "finance"],
-    date: "Feb 2025",
-    status: "live"
-  },
-  {
-    name: "readme-gen",
-    title: "README Generator",
-    excerpt: "Point it at a GitHub repo and it drafts a structured README using the file tree and existing comments.",
-    url: "https://example.com/readme",
-    image: "",
-    tags: ["ai", "dev"],
-    date: "Jan 2025",
-    status: "wip"
-  },
-  {
-    name: "logbook",
-    title: "Workout Logbook",
-    excerpt: "Plain text input, structured output. Log a set in natural language and it formats it into a clean history.",
-    url: "https://example.com/logbook",
-    image: "",
-    tags: ["health", "tool"],
-    date: "Nov 2024",
-    status: "archived"
-  },
-  {
-    name: "type-specimen",
-    title: "Type Specimen Board",
-    excerpt: "Drag in a font file and preview it across a set of real UI patterns — not just the alphabet.",
-    url: "https://example.com/type",
-    image: "",
-    tags: ["design", "dev"],
-    date: "Sep 2024",
-    status: "live"
-  }
-];
-
-/* ══ render ══ */
-
-const grid = document.getElementById('grid');
-const filterBar = document.getElementById('filter-bar');
-const countEl = document.getElementById('count-display');
-const searchInput = document.getElementById('search-input');
-
-let activeTag = 'all';
-let searchQuery = '';
-
-function allTags() {
-  const set = new Set();
-  projects.forEach(p => p.tags.forEach(t => set.add(t)));
-  return [...set].sort();
-}
-
-function applyFilters() {
-  const q = searchQuery.toLowerCase().trim();
-  let visible = 0;
-  grid.querySelectorAll('.card').forEach(card => {
-    const tagMatch = activeTag === 'all' || card.dataset.tags.split(',').includes(activeTag);
-    const searchMatch = !q
-      || card.dataset.title.toLowerCase().includes(q)
-      || card.dataset.excerpt.toLowerCase().includes(q)
-      || card.dataset.tags.toLowerCase().includes(q);
-    const show = tagMatch && searchMatch;
-    card.dataset.hidden = show ? 'false' : 'true';
-    if (show) visible++;
-  });
-  countEl.textContent = `${visible} build${visible !== 1 ? 's' : ''}`;
-}
-
-function buildFilters() {
-  const allBtn = document.createElement('button');
-  allBtn.className = 'filter-btn active';
-  allBtn.dataset.tag = 'all';
-  allBtn.textContent = 'All';
-  filterBar.appendChild(allBtn);
-
-  allTags().forEach(tag => {
-    const btn = document.createElement('button');
-    btn.className = 'filter-btn';
-    btn.dataset.tag = tag;
-    btn.textContent = tag;
-    filterBar.appendChild(btn);
-  });
-
-  filterBar.addEventListener('click', e => {
-    if (!e.target.classList.contains('filter-btn')) return;
-    filterBar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    e.target.classList.add('active');
-    activeTag = e.target.dataset.tag;
-    applyFilters();
-  });
-}
-
-searchInput.addEventListener('input', e => {
-  searchQuery = e.target.value;
-  applyFilters();
-});
-
-function statusClass(s) {
-  return s === 'live' ? 'status-live' : s === 'wip' ? 'status-wip' : 'status-archived';
-}
-
-function buildGrid() {
-  projects.forEach(p => {
-    const card = document.createElement('a');
-    card.className = 'card';
-    card.href = p.url;
-    card.target = '_blank';
-    card.rel = 'noopener';
-    card.dataset.tags = p.tags.join(',');
-    card.dataset.title = p.title;
-    card.dataset.excerpt = p.excerpt;
-    card.dataset.hidden = 'false';
-
-    const imgHtml = p.image
-      ? `<img class="card-img" src="${p.image}" alt="${p.title}" loading="lazy">`
-      : `<div class="card-img-placeholder">${p.title.charAt(0)}</div>`;
-
-    const tagsHtml = p.tags.map(t => `<span class="card-tag">${t}</span>`).join('');
-
-    card.innerHTML = `
-      ${imgHtml}
-      <span class="status ${statusClass(p.status)}">${p.status}</span>
-      <div class="card-body">
-        <div class="card-tags">${tagsHtml}</div>
-        <h2 class="card-title">${p.title}</h2>
-        <p class="card-excerpt">${p.excerpt}</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mr Frimpong's Lab — Things I've Built</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0e0e0e;
+        --bg2: #161616;
+        --bg3: #1e1e1e;
+        --border: rgba(255, 255, 255, 0.07);
+        --border-hover: rgba(255, 255, 255, 0.15);
+        --text: #f0ede8;
+        --text-muted: #888;
+        --text-subtle: #555;
+        --accent: #fb923c;
+        --accent-dim: rgba(251, 146, 60, 0.12);
+        --accent-text: #7a3a00;
+        --card-bg: #141414;
+        --tag-bg: rgba(255, 255, 255, 0.05);
+        --tag-text: #999;
+        --serif: "Instrument Serif", Georgia, serif;
+        --sans: "DM Sans", system-ui, sans-serif;
+        --mono: "DM Mono", monospace;
+      }
+
+      [data-theme="light"] {
+        --bg: #f8f7f3;
+        --bg2: #f0ede6;
+        --bg3: #e8e4db;
+        --border: rgba(0, 0, 0, 0.08);
+        --border-hover: rgba(0, 0, 0, 0.18);
+        --text: #1a1a1a;
+        --text-muted: #666;
+        --text-subtle: #aaa;
+        --accent: #c2520a;
+        --accent-dim: rgba(194, 82, 10, 0.08);
+        --accent-text: #c2520a;
+        --card-bg: #ffffff;
+        --tag-bg: rgba(0, 0, 0, 0.04);
+        --tag-text: #777;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: var(--sans);
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        transition:
+          background 0.3s,
+          color 0.3s;
+      }
+
+      /* ── NAV ── */
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        padding: 0 2rem;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        backdrop-filter: blur(12px);
+      }
+
+      .nav-brand {
+        font-family: var(--serif);
+        font-size: 1.15rem;
+        color: var(--text);
+        text-decoration: none;
+        letter-spacing: -0.01em;
+      }
+      .nav-brand span {
+        color: var(--accent);
+      }
+
+      .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+      }
+
+      .theme-toggle {
+        background: none;
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        cursor: pointer;
+        border-radius: 20px;
+        padding: 5px 12px;
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.05em;
+        transition:
+          border-color 0.2s,
+          color 0.2s;
+      }
+      .theme-toggle:hover {
+        border-color: var(--border-hover);
+        color: var(--text);
+      }
+
+      .build-count {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--text-subtle);
+      }
+
+      /* ── HERO ── */
+      .hero {
+        padding: 6rem 2rem 4rem;
+        max-width: 860px;
+        margin: 0 auto;
+      }
+
+      .hero-eyebrow {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--accent);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-bottom: 1.25rem;
+      }
+
+      .hero h1 {
+        font-family: var(--serif);
+        font-size: clamp(2.4rem, 6vw, 4.2rem);
+        font-weight: 400;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        color: var(--text);
+        margin-bottom: 1.5rem;
+      }
+      .hero h1 em {
+        font-style: italic;
+        color: var(--text-muted);
+      }
+
+      .hero-sub {
+        font-size: 1rem;
+        color: var(--text-muted);
+        line-height: 1.7;
+        max-width: 480px;
+      }
+
+      /* ── SEARCH ── */
+      .search-wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 2rem 1.5rem;
+      }
+      .search-container {
+        position: relative;
+      }
+      .search-input {
+        width: 100%;
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 10px 16px 10px 40px;
+        font-family: var(--sans);
+        font-size: 14px;
+        color: var(--text);
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .search-input::placeholder {
+        color: var(--text-subtle);
+      }
+      .search-input:focus {
+        border-color: var(--accent);
+      }
+      .search-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-subtle);
+        font-size: 14px;
+        pointer-events: none;
+      }
+
+      /* ── FILTER BAR ── */
+      .filter-bar {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 2rem 2.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+      .filter-btn {
+        background: none;
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        cursor: pointer;
+        border-radius: 20px;
+        padding: 5px 14px;
+        font-family: var(--sans);
+        font-size: 13px;
+        transition: all 0.15s;
+      }
+      .filter-btn:hover {
+        border-color: var(--border-hover);
+        color: var(--text);
+      }
+      .filter-btn.active {
+        background: var(--accent-dim);
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      /* ── GRID ── */
+      .grid-wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 2rem 6rem;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 5px;
+      }
+
+      /* ── CARD ── */
+      .card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 0;
+        overflow: hidden;
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        transition:
+          border-color 0.2s,
+          transform 0.2s;
+        position: relative;
+        padding: 1.5rem;
+      }
+      .card:first-child {
+        border-radius: 12px 0 0 0;
+      }
+      .card:nth-child(3) {
+        border-radius: 0 12px 0 0;
+      }
+      .grid:has(.card:nth-child(4)) .card:nth-last-child(1) {
+        border-radius: 0 0 12px 12px;
+      }
+
+      .card:hover {
+        border-color: var(--border-hover);
+        z-index: 1;
+        transform: translateY(-2px);
+      }
+
+      /* ── CARD INNER ── */
+      .card-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+
+      .card-initial {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background: var(--accent-dim);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--serif);
+        font-size: 1.1rem;
+        font-style: italic;
+        color: var(--accent);
+        flex-shrink: 0;
+      }
+
+      .card-tags {
+        display: flex;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.6rem;
+      }
+      .card-tag {
+        font-family: var(--mono);
+        font-size: 10px;
+        padding: 3px 8px;
+        border-radius: 4px;
+        background: var(--tag-bg);
+        color: var(--tag-text);
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .card-title {
+        font-family: var(--serif);
+        font-size: 1.15rem;
+        font-weight: 400;
+        line-height: 1.3;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.01em;
+      }
+
+      .card-excerpt {
+        font-size: 13.5px;
+        color: var(--text-muted);
+        line-height: 1.65;
+        flex: 1;
+        margin-bottom: 1.25rem;
+      }
+
+      .card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--border);
+        margin-top: auto;
+      }
+      .card-date {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--text-subtle);
+      }
+      .card-arrow {
+        font-size: 16px;
+        color: var(--text-subtle);
+        transition:
+          transform 0.2s,
+          color 0.2s;
+      }
+      .card:hover .card-arrow {
+        transform: translate(3px, -3px);
+        color: var(--accent);
+      }
+
+      /* ── STATUS BADGE ── */
+      .status {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        border-radius: 20px;
+      }
+      .status-live {
+        background: rgba(251, 146, 60, 0.15);
+        color: #fb923c;
+        border: 1px solid rgba(251, 146, 60, 0.3);
+      }
+      .status-wip {
+        background: rgba(255, 180, 50, 0.15);
+        color: #f5a623;
+        border: 1px solid rgba(255, 180, 50, 0.25);
+      }
+      .status-archived {
+        background: rgba(150, 150, 150, 0.1);
+        color: #888;
+        border: 1px solid rgba(150, 150, 150, 0.2);
+      }
+      [data-theme="light"] .status-live {
+        background: rgba(194, 82, 10, 0.08);
+        color: #c2520a;
+        border-color: rgba(194, 82, 10, 0.2);
+      }
+
+      /* ── FOOTER ── */
+      footer {
+        text-align: center;
+        padding: 2rem;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--text-subtle);
+        border-top: 1px solid var(--border);
+      }
+
+      /* ── RESPONSIVE ── */
+      @media (max-width: 640px) {
+        nav {
+          padding: 0 1.25rem;
+        }
+        .hero {
+          padding: 3.5rem 1.25rem 3rem;
+        }
+        .search-wrap,
+        .filter-bar,
+        .grid-wrap {
+          padding-left: 1.25rem;
+          padding-right: 1.25rem;
+        }
+        .grid {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+        .card {
+          border-radius: 10px !important;
+        }
+        .card:hover {
+          transform: none;
+        }
+      }
+      @media (max-width: 900px) and (min-width: 641px) {
+        .grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      .card[data-hidden="true"] {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a class="nav-brand" href="#">Mr Frimpong's <span>Lab</span></a>
+      <div class="nav-right">
+        <span class="build-count" id="count-display"></span>
+        <button class="theme-toggle" id="theme-btn">light</button>
       </div>
-      <div class="card-footer">
-        <span class="card-date">${p.date}</span>
-        <span class="card-arrow">↗</span>
+    </nav>
+
+    <section class="hero">
+      <p class="hero-eyebrow">Work in progress — always</p>
+      <h1>Things I've<br /><em>shipped, built &amp; deployed</em></h1>
+      <p class="hero-sub">
+        A running log of tools, experiments, and ideas I've turned into real
+        things.
+      </p>
+    </section>
+
+    <div class="search-wrap">
+      <div class="search-container">
+        <span class="search-icon">&#9906;</span>
+        <input
+          class="search-input"
+          id="search-input"
+          type="search"
+          placeholder="Search by name, tag, or description…"
+          autocomplete="off"
+        />
       </div>
-    `;
+    </div>
 
-    grid.appendChild(card);
-  });
+    <div class="filter-bar" id="filter-bar">
+      <button class="filter-btn active" data-tag="all">All</button>
+    </div>
 
-  countEl.textContent = `${projects.length} build${projects.length !== 1 ? 's' : ''}`;
-}
+    <div class="grid-wrap">
+      <div class="grid" id="grid"></div>
+    </div>
 
-buildFilters();
-buildGrid();
+    <footer>
+      Built by Akwesi Frimpong · Updated Manually · No Trackers — Yet.
+    </footer>
 
-/* ══ theme ══ */
-const themeBtn = document.getElementById('theme-btn');
-const savedTheme = localStorage.getItem('lab-theme') || 'dark';
-document.documentElement.setAttribute('data-theme', savedTheme);
-themeBtn.textContent = savedTheme === 'dark' ? 'light' : 'dark';
+    <script>
+      /* ═══════════════════════════════════════════════════
+         ✏️  PROJECTS LIST — Add more here
+         ═══════════════════════════════════════════════════
+         Fields:
+         - name:    short handle
+         - title:   display title on the card
+         - excerpt: one or two sentence description
+         - url:     where it lives
+         - tags:    array of strings for filtering
+         - date:    when you shipped it
+         - status:  "live" | "wip" | "archived"
+      */
+      const projects = [
+        {
+          name: "sub-tracker",
+          title: "Subscription Tracker",
+          excerpt:
+            "Track all your subscriptions in one place. See how much you're spending on each service and how long you've been subscribed.",
+          url: "https://subs.mrfrimpong.com",
+          tags: ["Next", "Tool", "Bespoke"],
+          date: "March 2025",
+          status: "live",
+        },
+        {
+          name: "quiet-time-app",
+          title: "Quiet Time App",
+          excerpt:
+            "All in one tool to help you fully immerse in the word at a go. Bible in 6 versions, AI for historical context, tailor-made journaling with youtube sermons.",
+          url: "https://bible.mrfrimpong.com",
+          tags: ["Devotional", "AI", "Bible"],
+          date: "March 2025",
+          status: "live",
+        },
+        {
+          name: "pots-and-balances",
+          title: "Pots & Balances",
+          excerpt:
+            "A bespoke application to help you get a general overview of your finances. Create multiple wallets, track all spends, and balance accounts.",
+          url: "https://pots.mrfrimpong.com",
+          tags: ["Finance", "Balance", "Custom Made"],
+          date: "Sept 2024",
+          status: "live",
+        },
+        {
+          name: "lend-me",
+          title: "Lend Ledger",
+          excerpt:
+            "Tailor made application to help track spends and borrows specifically from the EM funds.",
+          url: "https://lend.mrfrimpong.com",
+          tags: ["Cycle", "Balance Sheet"],
+          date: "Jan 2025",
+          status: "live",
+        },
+        {
+          name: "write",
+          title: "Write Flow",
+          excerpt:
+            "Custom made tool to allow writing in free flow. Easily downloadable and demo-able on main site.",
+          url: "https://write.mrfrimpong.com",
+          tags: ["Writing", "Markdown"],
+          date: "Nov 2024",
+          status: "live",
+        },
+        {
+          name: "writing-roadmap",
+          title: "Writing Roadmap",
+          excerpt:
+            "Tailor made roadmap to go through an intensive writing curriculum. Aim is to become an excellent writer.",
+          url: "https://learn-to-write.mrfrimpong.com",
+          tags: ["Writing", "Roadmap"],
+          date: "7 June 2024",
+          status: "live",
+        },
+        {
+          name: "public-speaking",
+          title: "Public Speaking Roadmap",
+          excerpt:
+            "Tailor made roadmap to teach Mintsui the ropes of public speaking and how to become an excellent speaker.",
+          url: "https://public-speaking.thefrimpongs.com",
+          tags: ["Speaking", "Roadmap"],
+          date: "3rd June 2024",
+          status: "live",
+        },
+        {
+          name: "partners-guid-and-support",
+          title: "Partner's Guide For Mintsui's Public Speaking Journey",
+          excerpt:
+            "Detailed notes on how to support Mintsui on her public speaking journey",
+          url: "https://hubby.thefrimpongs.com",
+          tags: ["Support", "Roadmap"],
+          date: "4th June 2024",
+          status: "live",
+        },
+      ];
 
-themeBtn.addEventListener('click', () => {
-  const current = document.documentElement.getAttribute('data-theme');
-  const next = current === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', next);
-  themeBtn.textContent = next === 'dark' ? 'light' : 'dark';
-  localStorage.setItem('lab-theme', next);
-});
-</script>
-</body>
+      const grid = document.getElementById("grid");
+      const filterBar = document.getElementById("filter-bar");
+      const countEl = document.getElementById("count-display");
+      const searchInput = document.getElementById("search-input");
+
+      let activeTag = "all";
+      let searchQuery = "";
+
+      function allTags() {
+        const set = new Set();
+        projects.forEach((p) => p.tags.forEach((t) => set.add(t)));
+        return [...set].sort();
+      }
+
+      function applyFilters() {
+        const q = searchQuery.toLowerCase().trim();
+        let visible = 0;
+        grid.querySelectorAll(".card").forEach((card) => {
+          const tagMatch =
+            activeTag === "all" ||
+            card.dataset.tags.split(",").includes(activeTag);
+          const searchMatch =
+            !q ||
+            card.dataset.title.toLowerCase().includes(q) ||
+            card.dataset.excerpt.toLowerCase().includes(q) ||
+            card.dataset.tags.toLowerCase().includes(q);
+          const show = tagMatch && searchMatch;
+          card.dataset.hidden = show ? "false" : "true";
+          if (show) visible++;
+        });
+        countEl.textContent = `${visible} build${visible !== 1 ? "s" : ""}`;
+      }
+
+      function buildFilters() {
+        allTags().forEach((tag) => {
+          const btn = document.createElement("button");
+          btn.className = "filter-btn";
+          btn.dataset.tag = tag;
+          btn.textContent = tag;
+          filterBar.appendChild(btn);
+        });
+        filterBar.addEventListener("click", (e) => {
+          if (!e.target.classList.contains("filter-btn")) return;
+          filterBar
+            .querySelectorAll(".filter-btn")
+            .forEach((b) => b.classList.remove("active"));
+          e.target.classList.add("active");
+          activeTag = e.target.dataset.tag;
+          applyFilters();
+        });
+      }
+
+      searchInput.addEventListener("input", (e) => {
+        searchQuery = e.target.value;
+        applyFilters();
+      });
+
+      function statusClass(s) {
+        return s === "live"
+          ? "status-live"
+          : s === "wip"
+            ? "status-wip"
+            : "status-archived";
+      }
+
+      function buildGrid() {
+        projects.forEach((p) => {
+          const card = document.createElement("a");
+          card.className = "card";
+          card.href = p.url;
+          card.target = "_blank";
+          card.rel = "noopener";
+          card.dataset.tags = p.tags.join(",");
+          card.dataset.title = p.title;
+          card.dataset.excerpt = p.excerpt;
+          card.dataset.hidden = "false";
+
+          const tagsHtml = p.tags
+            .map((t) => `<span class="card-tag">${t}</span>`)
+            .join("");
+
+          card.innerHTML = `
+            <div class="card-header">
+              <div class="card-initial">${p.title.charAt(0)}</div>
+              <span class="status ${statusClass(p.status)}">${p.status}</span>
+            </div>
+            <div class="card-tags">${tagsHtml}</div>
+            <h2 class="card-title">${p.title}</h2>
+            <p class="card-excerpt">${p.excerpt}</p>
+            <div class="card-footer">
+              <span class="card-date">${p.date}</span>
+              <span class="card-arrow">↗</span>
+            </div>
+          `;
+
+          grid.appendChild(card);
+        });
+
+        countEl.textContent = `${projects.length} build${projects.length !== 1 ? "s" : ""}`;
+      }
+
+      buildFilters();
+      buildGrid();
+
+      const themeBtn = document.getElementById("theme-btn");
+      const savedTheme = localStorage.getItem("lab-theme") || "dark";
+      document.documentElement.setAttribute("data-theme", savedTheme);
+      themeBtn.textContent = savedTheme === "dark" ? "light" : "dark";
+
+      themeBtn.addEventListener("click", () => {
+        const current = document.documentElement.getAttribute("data-theme");
+        const next = current === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", next);
+        themeBtn.textContent = next === "dark" ? "light" : "dark";
+        localStorage.setItem("lab-theme", next);
+      });
+    </script>
+  </body>
 </html>
